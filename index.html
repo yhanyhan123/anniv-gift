@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Anniversary</title>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Nunito:wght@400;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#4a0a1f; --plum:#8f1a40; --rose:#ff8fab; --peach:#ffd1dc; --light:#fff5f7;
+    --display:'Gloock',Georgia,serif; --body:'Nunito',system-ui,sans-serif; --hand:'Caveat',cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--night);color:var(--light);font-family:var(--body);line-height:1.6;overflow-x:hidden}
+  section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 1.25rem;text-align:center}
+  h1,h2{font-family:var(--display);font-weight:400;line-height:1.15}
+  h1{font-size:clamp(2.6rem,9vw,5.5rem)}
+  h2{font-size:clamp(1.8rem,6vw,3rem);margin-bottom:2rem}
+  button{font-family:var(--body);font-size:1rem;font-weight:600;border:0;border-radius:999px;padding:.85rem 1.8rem;cursor:pointer;background:var(--rose);color:var(--night);transition:transform .15s;touch-action:manipulation}
+  button:hover{transform:scale(1.05)}
+  :focus-visible{outline:3px solid var(--peach);outline-offset:3px}
+
+ 
+  #gate{position:fixed;inset:0;z-index:50;background:var(--night);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity .8s}
+  #gate.hide{opacity:0;pointer-events:none}
+  #gate p{font-family:var(--hand);font-size:2rem;color:var(--peach)}
+
+
+  #hearts{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+  .heart{position:absolute;bottom:-60px;animation:rise linear forwards}
+  .heart svg,#envelope svg{width:100%;height:100%;fill:var(--rose);display:block}
+  @keyframes rise{0%{transform:translateY(0) translateX(0) rotate(-10deg)}50%{transform:translateY(-55vh) translateX(25px) rotate(10deg)}100%{transform:translateY(-115vh) translateX(-15px) rotate(-10deg);opacity:0}}
+
+  main,#music{position:relative;z-index:2}
+  #music{position:fixed;top:calc(1rem + env(safe-area-inset-top,0px));right:1rem;z-index:40;padding:.6rem 1rem;font-size:.9rem}
+
+
+  #hero{background:radial-gradient(circle at 50% 30%,var(--plum),var(--night) 70%)}
+  .names{font-family:var(--hand);font-size:clamp(1.6rem,5vw,2.4rem);color:var(--rose);margin-bottom:1rem}
+  #counter{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:2.5rem}
+  #counter div{min-width:76px;padding:1rem .5rem;background:rgba(255,255,255,.07);border-radius:18px}
+  #counter b{display:block;font-family:var(--display);font-size:2rem;font-weight:400}
+  #counter span{font-size:.85rem;color:var(--peach)}
+
+
+  .timeline{max-width:640px;width:100%;border-left:3px solid var(--rose);padding-left:1.5rem;text-align:left}
+  .event{position:relative;margin-bottom:3rem;opacity:0;transform:translateY(24px);transition:.7s}
+  .event.show{opacity:1;transform:none}
+  .event::before{content:"";position:absolute;left:-2.2rem;top:.4rem;width:14px;height:14px;border-radius:50%;background:var(--peach)}
+  .event time{font-family:var(--hand);font-size:1.5rem;color:var(--rose)}
+  .event h3{font-family:var(--display);font-weight:400;font-size:1.5rem}
+  .event img{width:100%;max-height:300px;object-fit:cover;border-radius:14px;margin-top:.8rem;background:var(--plum)}
+
+
+  #envelope{width:84px;height:84px;cursor:pointer;background:none;padding:0;border-radius:0}
+  #letter{display:none;max-width:560px;width:100%;margin-top:1.5rem;padding:1.5rem 1.25rem;background:rgba(255,255,255,.07);border-radius:18px;font-family:var(--hand);font-size:1.55rem;line-height:1.5;text-align:left;white-space:pre-wrap;cursor:pointer}
+  #letter.open{display:block}
+  #skip{display:none;margin-top:.8rem;font-size:.85rem;color:var(--peach)}
+
+
+  #reason{max-width:520px;min-height:6rem;margin-bottom:1.5rem;padding:1.5rem;background:rgba(255,255,255,.07);border-radius:18px;font-size:1.2rem}
+
+
+  #ask{background:radial-gradient(circle at 50% 70%,var(--plum),var(--night) 70%)}
+  .btns{display:flex;gap:1.5rem;justify-content:center;align-items:center;margin-top:1rem;min-height:200px;position:relative;width:100%;max-width:420px}
+  #no{background:transparent;color:var(--light);border:2px solid var(--rose);touch-action:none;transition:left .25s,top .25s}
+  #answer{margin-top:1.5rem;font-family:var(--hand);font-size:2.2rem;color:var(--peach)}
+  canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:60}
+
+  @media (prefers-reduced-motion:reduce){.heart{display:none}.event{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+
+<div id="gate">
+  <p>I made something for you</p>
+  <button id="openBtn">Open</button>
+</div>
+
+
+<audio id="bgm" loop preload="auto" src="song.mp3"></audio>
+<button id="music" aria-label="Toggle music">Music: on</button>
+<div id="hearts" aria-hidden="true"></div>
+
+<main>
+
+  <section id="hero">
+    <p class="names" id="names"></p>
+    <h1>Happy Anniversary</h1>
+    <div id="counter" aria-live="off">
+      <div><b id="d">0</b><span>days</span></div>
+      <div><b id="h">0</b><span>hours</span></div>
+      <div><b id="m">0</b><span>minutes</span></div>
+      <div><b id="s">0</b><span>seconds</span></div>
+    </div>
+  </section>
+
+
+  <section id="story">
+    <h2>Our story</h2>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+
+  <section id="letterSec">
+    <h2>A letter for you</h2>
+    <button id="envelope" aria-label="Open the letter"></button>
+    <div id="letter"></div>
+    <p id="skip">Tap the letter to show it all</p>
+  </section>
+
+
+  <section id="reasons">
+    <h2>Reasons I love you</h2>
+    <div id="reason">Tap the button.</div>
+    <button id="reasonBtn">Show me a reason</button>
+  </section>
+
+ 
+  <section id="ask">
+    <h2>Will you be my girlfriend for another year?</h2>
+    <div class="btns" id="btns">
+      <button id="yes">Yes</button>
+      <button id="no">No</button>
+    </div>
+    <p id="answer"></p>
+  </section>
+</main>
+<canvas id="confetti"></canvas>
+
+<script>
+
+const CONFIG = {
+  names: "Arianne + Laura",
+  startDate: "2022-10-14T00:00:00",
+  letter:
+"My love,\n\n" +
+"Happy 4th anniversary, my love, my everything. I'm writing this letter on our very special day, and I know of course that you love reading my letters. It's been a while since I last wrote you one. I hope you'll feel my love through this letter, mahal ko.\n\n" +
+"I remember when we first got to know each other. It was a magical night for me, the night I said I love you and you said it back too. Those were the days when I wasn't sure if I deserved you, and you kept reassuring me that I can change and that you'll always be there to guide me. The first time you showed your face, you got a little bit insecure, but I was blown away by your beauty. Then the day came when you agreed to become my girlfriend. I was so ecstatic, and that's where our journey as a couple began.\n\n" +
+"Since the day I met you, your love for me has never changed. You were always there when I needed you. You always reassured me, even though ang kulit ko and I kept downplaying myself. You kept telling me that good days will come and to always stay positive. Even though it's hard for me to follow your advice, you never get tired of reminding me of my self-worth and that I should be kinder to myself.\n\n" +
+"I want you to know, mahal ko, that I see and feel everything you do for me. I hope the future will be kind to us. I'll always be here for you no matter what. The only future I want is to be always next to you. I always yearn for you, mahal ko. I miss you so so so much, and I can't wait to see you walk down that aisle.\n\n" +
+"I love you always, mahal ko. Words aren't enough to explain how much I love you. Thank you for being my best friend, my lover, and my soon-to-be wife.\n\n" +
+"Forever and always yours,\nYour minamahal",
+  timeline: [
+    { date: "May 2024", title: "Our first meetup",   img: "first.jfif" },
+    { date: "February 2025", title: "Our first trip",   img: "trip1.jpg" },
+    { date: "February 2026", title: "Our second trip",   img: "trip2.jfif" }
+  ],
+  reasons: [
+    "The way you smile.",
+    "The way you make my days special.",
+    "You kept telling me everything will be okay.",
+    "You love me in times I don't love myself.",
+    "You love me in times I act like I don't love you.",
+    "You know me so well.",
+    "You forgive me quickly.",
+    "You love me for who I am and who I'm going to be.",
+    "You are sad and you share your sadness with me.",
+    "You are pretty and sexy nyehehe :P",
+    "Always making me laugh.",
+    "Teaching me how to love myself more.",
+    "You love me unconditionally.",
+    "For being patient with me.",
+    "I can be silly and weird with you.",
+    "I love you because, how could I not?"
+  ]
+};
+
+
+const $ = id => document.getElementById(id);
+$("names").textContent = CONFIG.names;
+
+
+const bgm = $("bgm"), musicBtn = $("music");
+bgm.volume = 0.5;
+$("openBtn").onclick = () => {
+  $("gate").classList.add("hide");
+  bgm.play().catch(() => { musicBtn.textContent = "Music: off"; });
+  for (let i = 0; i < 30; i++) setTimeout(spawnHeart, i * 80);
+};
+musicBtn.onclick = () => {
+  if (bgm.paused) { bgm.play(); musicBtn.textContent = "Music: on"; }
+  else { bgm.pause(); musicBtn.textContent = "Music: off"; }
+};
+
+const start = new Date(CONFIG.startDate);
+function tick(){
+  let diff = Math.floor((Date.now() - start) / 1000);
+  $("d").textContent = Math.floor(diff / 86400);
+  $("h").textContent = Math.floor(diff % 86400 / 3600);
+  $("m").textContent = Math.floor(diff % 3600 / 60);
+  $("s").textContent = diff % 60;
+}
+tick(); setInterval(tick, 1000);
+
+
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 2.7 4.5 6.4 4.5c2.1 0 3.7 1.1 5.6 3.2 1.9-2.1 3.5-3.2 5.6-3.2 3.7 0 5.5 3.8 4 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const ENVELOPE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.5 2.2V17.5h15V7.2L12 13 4.5 7.2z"/></svg>';
+$("envelope").innerHTML = ENVELOPE;
+
+
+const hearts = $("hearts");
+function spawnHeart(){
+  const el = document.createElement("div");
+  el.className = "heart";
+  el.innerHTML = HEART;
+  el.style.left = Math.random() * 100 + "vw";
+  const size = 12 + Math.random() * 34;
+  el.style.width = el.style.height = size + "px";
+  el.style.opacity = 0.35 + Math.random() * 0.55;
+  el.style.animationDuration = 6 + Math.random() * 7 + "s";
+  hearts.appendChild(el);
+  setTimeout(() => el.remove(), 14000);
+}
+setInterval(spawnHeart, 220);
+
+
+CONFIG.timeline.forEach(e => {
+  const d = document.createElement("div");
+  d.className = "event";
+  d.innerHTML = `<time>${e.date}</time><h3>${e.title}</h3><img src="${e.img}" alt="${e.title}" loading="lazy" onerror="this.remove()">`;
+  $("timeline").appendChild(d);
+});
+const io = new IntersectionObserver(es => es.forEach(x => x.isIntersecting && x.target.classList.add("show")), {threshold:.3});
+document.querySelectorAll(".event").forEach(e => io.observe(e));
+
+
+let typed = false, typer = null;
+const letterEl = $("letter");
+$("envelope").onclick = () => {
+  if (typed) return; typed = true;
+  $("envelope").innerHTML = HEART;
+  letterEl.classList.add("open");
+  $("skip").style.display = "block";
+  let i = 0;
+  typer = setInterval(() => {
+    letterEl.textContent = CONFIG.letter.slice(0, ++i);
+    if (i >= CONFIG.letter.length) { clearInterval(typer); $("skip").style.display = "none"; }
+  }, 28);
+};
+letterEl.onclick = () => {
+  if (!typer) return;
+  clearInterval(typer); typer = null;
+  letterEl.textContent = CONFIG.letter;
+  $("skip").style.display = "none";
+};
+
+
+let reasonIndex = 0;
+$("reasonBtn").onclick = () => {
+  $("reason").textContent = CONFIG.reasons[reasonIndex];
+  $("reasonBtn").textContent = "Next reason";
+  reasonIndex = (reasonIndex + 1) % CONFIG.reasons.length;
+};
+
+
+const no = $("no"), yes = $("yes"), box = $("btns");
+function dodge(e){
+  if (e && e.cancelable) e.preventDefault();
+  const b = box.getBoundingClientRect(), r = no.getBoundingClientRect(), y = yes.getBoundingClientRect();
+  const w = r.width, h = r.height;
+  let x, t, overlap, tries = 0;
+  do {
+    x = Math.random() * Math.max(0, b.width - w);
+    t = Math.random() * Math.max(0, b.height - h);
+    const L = b.left + x, T = b.top + t;
+    overlap = L < y.right + 12 && L + w > y.left - 12 && T < y.bottom + 12 && T + h > y.top - 12;
+  } while (overlap && ++tries < 40);
+  no.style.position = "absolute";
+  no.style.left = x + "px";
+  no.style.top = t + "px";
+}
+no.addEventListener("pointerdown", dodge);
+no.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") dodge(e); });
+no.addEventListener("touchstart", dodge, {passive:false});
+no.addEventListener("click", dodge);
+
+
+function confetti(){
+  const c = $("confetti"), ctx = c.getContext("2d");
+  c.width = innerWidth; c.height = innerHeight;
+  const colors = ["#ff8fab","#ffd1dc","#fff5f7","#e63462"];
+  const ps = Array.from({length:160}, () => ({
+    x: c.width/2, y: c.height/2, vx: (Math.random()-.5)*14, vy: Math.random()*-14-2,
+    s: 4+Math.random()*6, col: colors[Math.floor(Math.random()*colors.length)]
+  }));
+  let f = 0;
+  (function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    ps.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.vy+=.35; ctx.fillStyle=p.col; ctx.fillRect(p.x,p.y,p.s,p.s); });
+    if (++f < 200) requestAnimationFrame(draw); else ctx.clearRect(0,0,c.width,c.height);
+  })();
+}
+yes.onclick = () => {
+  $("answer").textContent = "I love you always mahal kuuu.";
+  confetti();
+  for (let i = 0; i < 40; i++) setTimeout(spawnHeart, i * 60);
+};
+</script>
+</body>
+</html>
